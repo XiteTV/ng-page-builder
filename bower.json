@@ -1,0 +1,34 @@
+{
+  "name": "ng-page-buider",
+  "authors": [
+    "Jacek Chudziński <chudzinskijacek@gmail.com>"
+  ],
+  "description": "Page builder based on configs",
+  "main": "",
+  "moduleType": [],
+  "keywords": [
+    "angular",
+    "ng",
+    "netgenes",
+    "resource",
+    "cachedResources",
+    "menus",
+    "tables",
+    "filters",
+    "forms",
+    "editor"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular-cached-resource": "^1.4.2"
+  }
+}

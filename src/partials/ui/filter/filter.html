@@ -1,0 +1,5 @@
+<div class="filter">
+    <div class="label">{{ filter.label }}</div>
+    <div ng-if="!filter.kbDriven" class="input">{{ fbc.displayValue }}</div>
+    <input ng-if="filter.kbDriven" class="input" ng-model="$parent.filterValue" />
+</div>
