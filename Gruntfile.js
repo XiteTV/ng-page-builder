@@ -67,4 +67,8 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-bump');
 
     grunt.registerTask('build',['clean:pre','ngtemplates:build','concat:build','copy:build','uglify:build','clean:post']);
+
+    grunt.registerTask('patch',['build','bump:patch']);
+    grunt.registerTask('minor',['build','bump:minor']);
+    grunt.registerTask('major',['build','bump:major']);
 };
