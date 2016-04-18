@@ -1,6 +1,6 @@
 {
   "name": "ng-page-builder",
-  "version" : "0.0.3",
+  "version": "0.0.4",
   "authors": [
     "Jacek Chudziński <chudzinskijacek@gmail.com>"
   ],
@@ -30,6 +30,7 @@
     "tests"
   ],
   "dependencies": {
-    "angular-cached-resource": "^1.4.2"
+    "angular-cached-resource": "^1.4.2",
+    "angular-resource": "^1.5.5"
   }
 }

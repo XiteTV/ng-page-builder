@@ -13,6 +13,7 @@ module.exports = function(grunt) {
         concat: {
             build: {
                 src : [
+                    'bower_components/angular-resource/angular-resource.js',
                     'bower_components/angular-cached-resource/angular-cached-resource.js',
                     'src/js/*.js',
                     'src/js/*/*.js',
