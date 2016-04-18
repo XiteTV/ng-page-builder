@@ -11,7 +11,7 @@
             return {
                 restrict : 'E',
                 replace : true,
-                templateUrl: '../../partials/elements/inputs_container.html',
+                templateUrl: 'partials/elements/inputs_container.html',
                 compile: function compile() {
                     return {
 
