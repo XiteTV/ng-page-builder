@@ -39,6 +39,7 @@
                             data : dataSrc,
                             name : model,
                             mode : mode,
+                            multi : multi,
                             displayProperty : prop
                         };
                     }

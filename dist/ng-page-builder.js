@@ -2628,6 +2628,7 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                             data : dataSrc,
                             name : model,
                             mode : mode,
+                            multi : multi,
                             displayProperty : prop
                         };
                     }
