@@ -4796,6 +4796,11 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                 return self.data;
             }
 
+            this.getInstance = function( ) {
+
+                return new ResourceLoader( resourceName );
+            };
+
             this.newEntity = function () {
 
                 return new resource;
@@ -5011,7 +5016,6 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
         }
 
         __construct.call( this, resourceName, page, pageSize );
-
     }
 
     angular

@@ -113,6 +113,11 @@
                 return self.data;
             }
 
+            this.getInstance = function( ) {
+
+                return new ResourceLoader( resourceName );
+            };
+
             this.newEntity = function () {
 
                 return new resource;
@@ -328,7 +333,6 @@
         }
 
         __construct.call( this, resourceName, page, pageSize );
-
     }
 
     angular
