@@ -5251,6 +5251,19 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
 angular.module('npb').run(['$templateCache', function($templateCache) {
   'use strict';
 
+  $templateCache.put('partials/elements/inputs_container.html',
+    "<div class=\"editor-module\">\n" +
+    "    <div class=\"header\">\n" +
+    "        <div class=\"title\">{{ title }}</div>\n" +
+    "        <div class=\"actions-container\"></div>\n" +
+    "    </div>\n" +
+    "    <form class=\"body inputs-container\">\n" +
+    "\n" +
+    "    </form>\n" +
+    "</div>"
+  );
+
+
   $templateCache.put('partials/ui/filter/boolean.html',
     "<div class=\"filter\">\n" +
     "    <div class=\"label\">{{ filter.label }}</div>\n" +
