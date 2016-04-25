@@ -20,11 +20,18 @@
                             var body, actionBody, inputs;
 
 
-                            angular.forEach( element.find('div'), function( div ) {
-                                var $div = angular.element(div);
-                                if ($div.hasClass('inputs-container')) {
-                                    body = $div;
+                            angular.forEach( element.find('form'), function( form ) {
+
+                                var $form = angular.element(form);
+                                if ($form.hasClass('inputs-container')) {
+                                    body = $form;
                                 }
+                            });
+
+                            angular.forEach( element.find('div'), function( div ) {
+
+                                var $div = angular.element(div);
+                                
                                 if ($div.hasClass('actions-container')) {
                                     actionBody = $div;
                                 }
