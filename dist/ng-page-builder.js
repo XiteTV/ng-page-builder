@@ -1963,14 +1963,22 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
 
                         pre : function preLink( scope, element, attr  ) {
 
-                            var body, actionBody, inputs;
+                            var body, actionBody, inputs, id;
 
+                            id = scope.id;
 
                             angular.forEach( element.find('form'), function( form ) {
 
                                 var $form = angular.element(form);
+
                                 if ($form.hasClass('inputs-container')) {
+
                                     body = $form;
+                                }
+                                if (body && id) {
+
+                                    body.attr('id',id);
+                                    body.attr('name',id);
                                 }
                             });
 
