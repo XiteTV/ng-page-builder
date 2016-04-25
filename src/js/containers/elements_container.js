@@ -33,6 +33,7 @@
                                 element.html('');
 
                                 if (!n) {
+
                                     return;
                                 }
 
@@ -44,7 +45,7 @@
                                     el = elementBuilder( dispatched.element );
                                     nScope = scope.$new();
 
-                                    angular.extend(nScope, dispatched.options );
+                                    angular.extend( nScope, dispatched.options );
 
                                     $compile(el)(nScope);
 
