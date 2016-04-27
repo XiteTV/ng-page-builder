@@ -15,7 +15,7 @@
                     message : 'Error!'
                 },
                 {
-                    text : /success|successful|/i,
+                    test : /success|successful|/i,
                     message: 'OK!'
                 }
             ];
