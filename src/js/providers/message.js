@@ -9,17 +9,51 @@
         .provider('message', function() {
 
             var messages = {};
+            var fallback = [
+                {
+                    test : /error|fail/i,
+                    message : 'Error!'
+                },
+                {
+                    text : /success|successful|/i,
+                    message: 'OK!'
+                }
+            ];
+
+            var findCallback = function ( id ) {
+
+                for( var i in fallback ) {
+
+                    if ( fallback.hasOwnProperty(i) && fallback[i].test.test( id )) {
+
+                        return fallback[ i ].message;
+                    }
+                }
+            };
 
             function MessageHandler() {
 
                 this.getRawMessage = function( tplId ) {
 
+                    var message;
+
                     if ( typeof messages[tplId] === 'undefined') {
 
-                        throw new Error('Message `'+tplId+'` is not registered');
+                        console.warn('Message `%s` is not registered. You can customize this message instead of using fallback');
+
+                        message = findCallback( tplId );
+
+                    } else {
+
+                        message = messages[ tplId ];
                     }
 
-                    return messages[ tplId ];
+                    if (!message) {
+
+                        throw new Error('Message `'+tplId+'` is not registered and dont match any fallback');
+                    }
+
+                    return message;
                 };
 
                 this.getMessage = function( tplId, content ) {
@@ -48,6 +82,11 @@
                     this.addMessage( msgId, msgFormat );
 
                 }.bind(this));
+            };
+
+            this.setFallback = function ( userFallback ) {
+
+                fallback = userFallback;
             };
 
             this.$get = function messageHandlerFactory() {
