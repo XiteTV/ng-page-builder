@@ -1952,7 +1952,7 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
 
     angular
         .module('npb')
-        .directive('xfeInputsContainer', function( $compile, inputSets, elementBuilder ) {
+        .directive('xfeInputsContainer', function( $compile, inputSets, elementBuilder, $timeout ) {
 
             return {
                 restrict : 'E',
@@ -1991,31 +1991,37 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                                 }
                             });
 
-                            inputs = inputSets.getSet( scope.inputsSet );
 
-                            angular.forEach( inputs, function( inputDefinition ) {
+                            var build = function ( ) {
 
-                                var elName, elementTemplate, element, nScope;
-                                elName = inputDefinition.element;
-                                elementTemplate =
-                                    '<div class="form-group">' +
-                                    '   <label class="control-label col-md-5">' +
-                                    '       {{ configuration.label }}' +
-                                    '   </label>' +
-                                    '   <div class="col-md-7">' +
-                                    '       %%'+
-                                    '   </div>' +
-                                    '</div>';
+                                inputs = inputSets.getSet( scope.inputsSet );
 
-                                element = elementBuilder( elName, elementTemplate);
-                                nScope = scope.$new();
+                                angular.forEach( inputs, function( inputDefinition ) {
 
-                                nScope.configuration = inputDefinition;
+                                    var elName, elementTemplate, element, nScope;
+                                    elName = inputDefinition.element;
+                                    elementTemplate =
+                                        '<div class="form-group">' +
+                                        '   <label class="control-label col-md-5">' +
+                                        '       {{ configuration.label }}' +
+                                        '   </label>' +
+                                        '   <div class="col-md-7">' +
+                                        '       %%'+
+                                        '   </div>' +
+                                        '</div>';
 
-                                $compile(element)(nScope);
+                                    element = elementBuilder( elName, elementTemplate);
+                                    nScope = scope.$new();
 
-                                body.append(element);
-                            });
+                                    nScope.configuration = inputDefinition;
+
+                                    $compile(element)(nScope);
+
+                                    body.append(element);
+                                });
+                            };
+
+                            $timeout( build );
 
                             if ( scope.headerActions && scope.headerActions.length ) {
 
