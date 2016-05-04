@@ -69,13 +69,16 @@
 
                                     nScope.configuration = inputDefinition;
 
-                                    $compile(element)(nScope);
+                                    $compile( element ) (nScope );
 
                                     body.append(element);
                                 });
                             };
 
-                            $timeout( build );
+                            $timeout( function () {
+
+                                $timeout( build );
+                            });
 
                             if ( scope.headerActions && scope.headerActions.length ) {
 
