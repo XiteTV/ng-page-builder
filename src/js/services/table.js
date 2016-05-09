@@ -88,7 +88,7 @@
                     var columnsPath = getColumnsStoragePath( this.currentId );
                     defaultColumnSet = columnSet.serialize();
 
-                    columnSet.restore( $localStorage.getItem( columnsPath, defaultColumnSet));
+                    columnSet.restore( $localStorage.getItem( columnsPath, defaultColumnSet ) );
 
                     this.columnSet = columnSet;
                     this.loader = loader;

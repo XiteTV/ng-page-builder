@@ -153,14 +153,14 @@
                             var msgId = generateMessageId(method, 'success');
                             var msg = message.getMessage(msgId, httpResponse.data);
 
-                            notifier.notify('success', msg);
+                            notifier.notify('success', msg ) ;
 
                             return httpResponse;
                         },
                         responseError: function (httpResponse) {
 
-                            var msgId = generateMessageId(method, 'error');
-                            var msg = message.getMessage(msgId,httpResponse.config.data);
+                            var msgId = generateMessageId( method, 'error');
+                            var msg = message.getMessage( msgId, httpResponse.config.data);
 
                             notifier.message('error', msg)
 

@@ -57,7 +57,19 @@
                         return new Error('ColumnHandler Error! Column `'+id+'` does not exists!');
                     }
 
-                    return Object.assign({id:id},columnDefault,columns[ id ], override || {});
+                    return Object.assign( { id: id }, columnDefault, columns[ id ], override || {});
+                };
+
+                this.lazyGet = function ( column ) {
+
+                    var id, override, isArray;
+
+                    isArray = angular.isArray( column );
+
+                    override =  isArray && column[ 1 ] || { };
+                    id = isArray && column[ 0 ] || column;
+
+                    return this.get( id, override );
                 };
             };
 

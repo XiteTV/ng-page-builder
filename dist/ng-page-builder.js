@@ -3021,7 +3021,19 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                         return new Error('ColumnHandler Error! Column `'+id+'` does not exists!');
                     }
 
-                    return Object.assign({id:id},columnDefault,columns[ id ], override || {});
+                    return Object.assign( { id: id }, columnDefault, columns[ id ], override || {});
+                };
+
+                this.lazyGet = function ( column ) {
+
+                    var id, override, isArray;
+
+                    isArray = angular.isArray( column );
+
+                    override =  isArray && column[ 1 ] || { };
+                    id = isArray && column[ 0 ] || column;
+
+                    return this.get( id, override );
                 };
             };
 
@@ -4618,14 +4630,14 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                             var msgId = generateMessageId(method, 'success');
                             var msg = message.getMessage(msgId, httpResponse.data);
 
-                            notifier.notify('success', msg);
+                            notifier.notify('success', msg ) ;
 
                             return httpResponse;
                         },
                         responseError: function (httpResponse) {
 
-                            var msgId = generateMessageId(method, 'error');
-                            var msg = message.getMessage(msgId,httpResponse.config.data);
+                            var msgId = generateMessageId( method, 'error');
+                            var msg = message.getMessage( msgId, httpResponse.config.data);
 
                             notifier.message('error', msg)
 
@@ -5285,7 +5297,7 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                     var columnsPath = getColumnsStoragePath( this.currentId );
                     defaultColumnSet = columnSet.serialize();
 
-                    columnSet.restore( $localStorage.getItem( columnsPath, defaultColumnSet));
+                    columnSet.restore( $localStorage.getItem( columnsPath, defaultColumnSet ) );
 
                     this.columnSet = columnSet;
                     this.loader = loader;
