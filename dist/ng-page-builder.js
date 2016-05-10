@@ -3919,7 +3919,15 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
             this.level = level;
             this.onResolve(this);
 
-            notifier.message(level, msg || text)
+            if (level === 'error') {
+
+                notifier.message( level, msg || text );
+
+            } else {
+
+                notifier.notify( level, msg || text );
+            }
+
             notifier.tasks.splice( notifier.tasks.indexOf( this ) , 1 );
         };
     }
@@ -5176,7 +5184,7 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
 
                         var startMsgId = generateMessageId( resourceName, procedure, 'start');
                         var startMsg = message.getMessage( startMsgId, payload );
-                        var rpcTask = notifier.task(startMsg);
+                        var rpcTask = notifier.task( startMsg );
 
                         var procedureResponse = resource.callProcedure({}, {
 
@@ -5190,13 +5198,13 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                                 function() {
                                     var msgId = generateMessageId( resourceName, procedure, 'success');
                                     var msg = message.getMessage( msgId, payload );
-                                    rpcTask.resolve('success',msg)
+                                    rpcTask.resolve('success', msg );
                                 },
                                 function( reason ) {
 
                                     var msgId = generateMessageId( resourceName, procedure, 'error');
                                     var msg = message.getMessage( msgId, payload );
-                                    rpcTask.resolve('error',msg)
+                                    rpcTask.resolve('error', msg );
                                 }
                             );
 

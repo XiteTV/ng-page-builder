@@ -27,7 +27,15 @@
             this.level = level;
             this.onResolve(this);
 
-            notifier.message(level, msg || text)
+            if (level === 'error') {
+
+                notifier.message( level, msg || text );
+
+            } else {
+
+                notifier.notify( level, msg || text );
+            }
+
             notifier.tasks.splice( notifier.tasks.indexOf( this ) , 1 );
         };
     }
