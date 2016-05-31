@@ -39,7 +39,7 @@
 
                     if ( typeof messages[tplId] === 'undefined') {
 
-                        console.warn('Message `%s` is not registered. You can customize this message instead of using fallback');
+                        console.warn('Message `%s` is not registered. You can customize this message instead of using fallback', tplId );
 
                         message = findCallback( tplId );
 

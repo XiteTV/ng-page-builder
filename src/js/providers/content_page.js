@@ -57,6 +57,7 @@
         this.wildCardResolver = null;
         this.initialFilterValues = {};
         this.contextMenu = null;
+        this.pageMenu = null;
 
         this.getMembers = function() {
 
@@ -144,6 +145,11 @@
 
         this.getContextMenu = function( ) {
             return this.contextMenu || ( parent instanceof ContentPageDefinition ? parent.getContextMenu() : null);
+        };
+
+        this.getPageMenu = function ( ) {
+
+            return this.pageMenu || ( parent instanceof  ContentPageDefinition ? parent.getPageMenu() : null);
         };
 
         function __constructor( config, objParent ) {
