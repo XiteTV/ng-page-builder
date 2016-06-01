@@ -3918,6 +3918,12 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
 
         this.text = text;
         this.level = 'progress';
+
+        /**
+         *
+         * @type {float|null}
+         */
+        this.progress = null;
         this.onResolve = angular.noop;
 
         this.resolve = function( level, msg ) {
@@ -3936,6 +3942,14 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
 
             notifier.tasks.splice( notifier.tasks.indexOf( this ) , 1 );
         };
+
+        /**
+         *
+         * @param progress float
+         */
+        this.setProgress = function ( progress ) {
+            this.progress = progress;
+        }
     }
 
     function  Notifier( notifyHandler ) {
@@ -3962,7 +3976,7 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
             return task;
         },
 
-        notify : function( level, text ) {
+        notify : function pushNotify( level, text ) {
 
             this.notifyHandler( level, text );
         }

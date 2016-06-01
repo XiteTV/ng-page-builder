@@ -20,6 +20,12 @@
 
         this.text = text;
         this.level = 'progress';
+
+        /**
+         *
+         * @type {float|null}
+         */
+        this.progress = null;
         this.onResolve = angular.noop;
 
         this.resolve = function( level, msg ) {
@@ -38,6 +44,14 @@
 
             notifier.tasks.splice( notifier.tasks.indexOf( this ) , 1 );
         };
+
+        /**
+         *
+         * @param progress float
+         */
+        this.setProgress = function ( progress ) {
+            this.progress = progress;
+        }
     }
 
     function  Notifier( notifyHandler ) {
@@ -64,7 +78,7 @@
             return task;
         },
 
-        notify : function( level, text ) {
+        notify : function pushNotify( level, text ) {
 
             this.notifyHandler( level, text );
         }
