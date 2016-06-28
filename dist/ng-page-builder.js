@@ -2636,7 +2636,7 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                 controllerAs : 'npbSi',
                 link : function( scope, element ) {
 
-                    var model, multi, prop, dataSrc, readonly, type, mode, switchMode, validators, required;
+                    var model, multi, prop, dataSrc, readonly, type, mode, switchMode, validators, settings, required;
 
                     model = scope.configuration.model;
                     multi = scope.configuration.multi;
@@ -2648,7 +2648,9 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                     type = scope.configuration.type;
                     mode = scope.configuration.selectionMode;
                     switchMode = scope.configuration.switchMode;
-                    validators = scope.configuration.validators || [];
+
+                    settings = scope.configuration.settings || {};
+                    validators = settings.validators || [];
                     required = validators.indexOf('required') > -1;
                     
 
