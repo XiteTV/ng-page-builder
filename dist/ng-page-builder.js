@@ -2721,7 +2721,7 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                             ||
                             (required && multi && d.length)
                             ||
-                            (required && !multi && typeof d === 'object')
+                            (required && !multi && d !== null && typeof d === 'object')
                         )
                             scope.npbSi.$valid = true;
                         else
