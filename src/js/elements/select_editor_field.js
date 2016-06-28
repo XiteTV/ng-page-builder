@@ -13,10 +13,16 @@
 
                 replace : true,
                 restrict: 'E',
-                template : '<p>{{ displayValue }}</p>',
+                template : '<p data-pseudo-input>{{ displayValue }}</p>',
+                controller: function ( $scope ) {
+                    
+                    this.$valid;
+                    
+                },
+                controllerAs : 'npbSi',
                 link : function( scope, element ) {
 
-                    var model, multi, prop, dataSrc, readonly, type, mode, switchMode;
+                    var model, multi, prop, dataSrc, readonly, type, mode, switchMode, validators, required;
 
                     model = scope.configuration.model;
                     multi = scope.configuration.multi;
@@ -28,11 +34,15 @@
                     type = scope.configuration.type;
                     mode = scope.configuration.selectionMode;
                     switchMode = scope.configuration.switchMode;
+                    validators = scope.configuration.validators || [];
+                    required = validators.indexOf('required') > -1;
+                    
 
                     function getDialogId() {
 
                          return { search : 'dictionary_searcher', select : 'dictionary_chooser' }[ type ];
                     }
+
                     function getConfig( ) {
 
                         return {
@@ -90,9 +100,27 @@
                         return ret;
                     }
 
+                    function  valid( d ) {
+
+                        if (
+                            !required
+                            ||
+                            (required && multi && d.length)
+                            ||
+                            (required && !multi && typeof d === 'object')
+                        )
+                            scope.npbSi.$valid = true;
+                        else
+                            scope.npbSi.$valid = false;
+                    }
+
                     scope.$watch('$parent.editor.data.'+ model, function( n ) {
 
+                        valid( n );
+
                         if ( n && (n.length || n.name) ) {
+
+
                             var d = propertyRenderer( n, prop, multi );
 
                             scope.displayValue = d;

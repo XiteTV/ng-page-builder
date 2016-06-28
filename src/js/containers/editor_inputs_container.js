@@ -69,7 +69,7 @@
 
                                     nScope.configuration = inputDefinition;
 
-                                    $compile( element ) (nScope );
+                                    $compile( element ) ( nScope );
 
                                     body.append(element);
                                 });
