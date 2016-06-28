@@ -35,8 +35,8 @@
                     mode = scope.configuration.selectionMode;
                     switchMode = scope.configuration.switchMode;
 
-                    settings = scope.configuration.settings || {};
-                    validators = settings.validators || [];
+
+                    validators = scope.configuration.validators || [];
                     required = validators.indexOf('required') > -1;
                     
 
