@@ -53,10 +53,15 @@
 
                     _.each( serialized, function( item ) {
 
-                        _.find(this.columns, function(column) {
+                        var c = _.find(this.columns, function(column) {
                             return column.id === item.id;
 
-                        }).visible = item.v;
+                        });
+
+                        if (c) {
+                            c.visible = item.v;
+                        }
+
 
                     }.bind(this));
                 };

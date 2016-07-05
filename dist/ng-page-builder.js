@@ -2705,11 +2705,12 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
 
 
                     function handleValue( value) {
+
                         var ret;
                         ret = value;
 
                         if (!multi) {
-
+                            
                             ret = value[0];
                         }
 
@@ -5320,10 +5321,15 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
 
                     _.each( serialized, function( item ) {
 
-                        _.find(this.columns, function(column) {
+                        var c = _.find(this.columns, function(column) {
                             return column.id === item.id;
 
-                        }).visible = item.v;
+                        });
+
+                        if (c) {
+                            c.visible = item.v;
+                        }
+
 
                     }.bind(this));
                 };

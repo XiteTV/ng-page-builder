@@ -91,11 +91,12 @@
 
 
                     function handleValue( value) {
+
                         var ret;
                         ret = value;
 
                         if (!multi) {
-
+                            
                             ret = value[0];
                         }
 
