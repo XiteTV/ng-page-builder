@@ -58,7 +58,7 @@
                                 function( reason ) {
 
                                     var msgId = generateMessageId( resourceName, procedure, 'error');
-                                    var msg = message.getMessage( msgId, payload );
+                                    var msg = message.getMessage( msgId, payload, reason.data.exception );
 
                                     notifier.notify( 'error', msg );
                                 }

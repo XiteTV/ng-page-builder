@@ -80,7 +80,7 @@
                  */
                 this.getMessage = function( tplId, content, fallback ) {
 
-                    var messageFormat = this.getRawMessage( tplId );
+                    var messageFormat = this.getRawMessage( tplId, fallback );
 
                     return stringFormat( messageFormat, content );
                 };

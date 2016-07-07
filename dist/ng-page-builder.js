@@ -3911,7 +3911,7 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                  */
                 this.getMessage = function( tplId, content, fallback ) {
 
-                    var messageFormat = this.getRawMessage( tplId );
+                    var messageFormat = this.getRawMessage( tplId, fallback );
 
                     return stringFormat( messageFormat, content );
                 };
@@ -5279,7 +5279,7 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                                 function( reason ) {
 
                                     var msgId = generateMessageId( resourceName, procedure, 'error');
-                                    var msg = message.getMessage( msgId, payload );
+                                    var msg = message.getMessage( msgId, payload, reason.data.exception );
 
                                     notifier.notify( 'error', msg );
                                 }
