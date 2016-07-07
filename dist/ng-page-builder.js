@@ -5269,13 +5269,17 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                         procedureResponse
                             .$promise
                             .then(
-                                function( data ) {
+
+                                function( ) {
 
                                     var msgId = generateMessageId( resourceName, procedure, 'success');
                                     var msg = message.getMessage( msgId, payload );
 
                                     notifier.notify( 'success', msg );
-                                },
+                                }
+                            )
+                            .catch(
+
                                 function( reason ) {
 
                                     var msgId = generateMessageId( resourceName, procedure, 'error');
