@@ -34,9 +34,10 @@
 
                     return function( payload ) {
 
-                        var startMsgId = generateMessageId( resourceName, procedure, 'start');
-                        var startMsg = message.getMessage( startMsgId, payload );
-                        var rpcTask = notifier.task( startMsg );
+                        // var startMsgId = generateMessageId( resourceName, procedure, 'start');
+                        // var startMsg = message.getMessage( startMsgId, payload );
+
+                        // var rpcTask = notifier.task( startMsg );
 
                         var procedureResponse = resource.callProcedure({}, {
 
@@ -47,16 +48,19 @@
                         procedureResponse
                             .$promise
                             .then(
-                                function() {
+                                function( data ) {
+
                                     var msgId = generateMessageId( resourceName, procedure, 'success');
                                     var msg = message.getMessage( msgId, payload );
-                                    rpcTask.resolve('success', msg );
+
+                                    notifier.notify( 'success', msg );
                                 },
                                 function( reason ) {
 
                                     var msgId = generateMessageId( resourceName, procedure, 'error');
                                     var msg = message.getMessage( msgId, payload );
-                                    rpcTask.resolve('error', msg );
+
+                                    notifier.notify( 'error', msg );
                                 }
                             );
 

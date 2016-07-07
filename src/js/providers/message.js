@@ -31,32 +31,54 @@
                 }
             };
 
+            /**
+             * Messages handler
+             * @constructor
+             */
             function MessageHandler() {
 
-                this.getRawMessage = function( tplId ) {
+                /**
+                 *
+                 * @param tplId string
+                 * @param fallback string
+                 * @returns string
+                 */
+                this.getRawMessage = function( tplId, fallback ) {
 
                     var message;
 
-                    if ( typeof messages[tplId] === 'undefined') {
+                    if ( typeof messages[tplId] === 'undefined' && !fallback) {
 
                         console.warn('Message `%s` is not registered. You can customize this message instead of using fallback', tplId );
 
                         message = findCallback( tplId );
 
-                    } else {
+                    }
+                    else if ( typeof messages[tplId] === 'undefined' && fallback ) {
+
+                        message = fallback;
+                    }
+                    else {
 
                         message = messages[ tplId ];
                     }
 
                     if (!message) {
 
-                        throw new Error('Message `'+tplId+'` is not registered and dont match any fallback');
+                        throw new Error('Message `' + tplId + '` is not registered and dont match any fallback');
                     }
 
                     return message;
                 };
 
-                this.getMessage = function( tplId, content ) {
+                /**
+                 *
+                 * @param tplId string
+                 * @param content object
+                 * @param fallback string
+                 * @returns string
+                 */
+                this.getMessage = function( tplId, content, fallback ) {
 
                     var messageFormat = this.getRawMessage( tplId );
 

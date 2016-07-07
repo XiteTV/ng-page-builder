@@ -162,7 +162,7 @@
                             var msgId = generateMessageId( method, 'error');
                             var msg = message.getMessage( msgId, httpResponse.config.data);
 
-                            notifier.message('error', msg)
+                            notifier.notify('error', msg)
 
                             return httpResponse;
                         }

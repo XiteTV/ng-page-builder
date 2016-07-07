@@ -3862,32 +3862,54 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                 }
             };
 
+            /**
+             * Messages handler
+             * @constructor
+             */
             function MessageHandler() {
 
-                this.getRawMessage = function( tplId ) {
+                /**
+                 *
+                 * @param tplId string
+                 * @param fallback string
+                 * @returns string
+                 */
+                this.getRawMessage = function( tplId, fallback ) {
 
                     var message;
 
-                    if ( typeof messages[tplId] === 'undefined') {
+                    if ( typeof messages[tplId] === 'undefined' && !fallback) {
 
                         console.warn('Message `%s` is not registered. You can customize this message instead of using fallback', tplId );
 
                         message = findCallback( tplId );
 
-                    } else {
+                    }
+                    else if ( typeof messages[tplId] === 'undefined' && fallback ) {
+
+                        message = fallback;
+                    }
+                    else {
 
                         message = messages[ tplId ];
                     }
 
                     if (!message) {
 
-                        throw new Error('Message `'+tplId+'` is not registered and dont match any fallback');
+                        throw new Error('Message `' + tplId + '` is not registered and dont match any fallback');
                     }
 
                     return message;
                 };
 
-                this.getMessage = function( tplId, content ) {
+                /**
+                 *
+                 * @param tplId string
+                 * @param content object
+                 * @param fallback string
+                 * @returns string
+                 */
+                this.getMessage = function( tplId, content, fallback ) {
 
                     var messageFormat = this.getRawMessage( tplId );
 
@@ -4698,7 +4720,7 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                             var msgId = generateMessageId( method, 'error');
                             var msg = message.getMessage( msgId, httpResponse.config.data);
 
-                            notifier.message('error', msg)
+                            notifier.notify('error', msg)
 
                             return httpResponse;
                         }
@@ -5233,9 +5255,10 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
 
                     return function( payload ) {
 
-                        var startMsgId = generateMessageId( resourceName, procedure, 'start');
-                        var startMsg = message.getMessage( startMsgId, payload );
-                        var rpcTask = notifier.task( startMsg );
+                        // var startMsgId = generateMessageId( resourceName, procedure, 'start');
+                        // var startMsg = message.getMessage( startMsgId, payload );
+
+                        // var rpcTask = notifier.task( startMsg );
 
                         var procedureResponse = resource.callProcedure({}, {
 
@@ -5246,16 +5269,19 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                         procedureResponse
                             .$promise
                             .then(
-                                function() {
+                                function( data ) {
+
                                     var msgId = generateMessageId( resourceName, procedure, 'success');
                                     var msg = message.getMessage( msgId, payload );
-                                    rpcTask.resolve('success', msg );
+
+                                    notifier.notify( 'success', msg );
                                 },
                                 function( reason ) {
 
                                     var msgId = generateMessageId( resourceName, procedure, 'error');
                                     var msg = message.getMessage( msgId, payload );
-                                    rpcTask.resolve('error', msg );
+
+                                    notifier.notify( 'error', msg );
                                 }
                             );
 
