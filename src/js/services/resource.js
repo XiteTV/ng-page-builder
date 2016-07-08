@@ -158,11 +158,19 @@
                             return httpResponse;
                         },
                         responseError: function (httpResponse) {
+                            
+                            var msg = null;
+                            if (
+                                httpResponse.data.error.userMessage === undefined ||
+                                httpResponse.data.error.userMessage === null
+                            ) {
+                                var msgId = generateMessageId( method, 'error');
+                                msg = message.getMessage( msgId, httpResponse.config.data);
+                            } else {
+                                msg = httpResponse.data.error.userMessage;
+                            }
 
-                            var msgId = generateMessageId( method, 'error');
-                            var msg = message.getMessage( msgId, httpResponse.config.data);
-
-                            notifier.notify('error', msg)
+                            notifier.notify('error', msg);
 
                             return httpResponse;
                         }
