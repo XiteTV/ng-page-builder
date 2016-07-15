@@ -22,7 +22,7 @@
                 controllerAs : 'npbSi',
                 link : function( scope, element ) {
 
-                    var model, multi, prop, dataSrc, readonly, type, mode, switchMode, validators, settings, required;
+                    var model, multi, prop, dataSrc, readonly, type, mode, switchMode, validators, settings, required, watchMethod;
 
                     model = scope.configuration.model;
                     multi = scope.configuration.multi;
@@ -34,7 +34,7 @@
                     type = scope.configuration.type;
                     mode = scope.configuration.selectionMode;
                     switchMode = scope.configuration.switchMode;
-
+                    watchMethod = multi ? '$watchCollection' : '$watch';
 
                     validators = scope.configuration.validators || [];
                     required = validators.indexOf('required') > -1;
@@ -117,7 +117,9 @@
                             scope.npbSi.$valid = false;
                     }
 
-                    scope.$watch('$parent.editor.data.'+ model, function( n ) {
+
+
+                    scope[watchMethod]('$parent.editor.data.'+ model, function( n ) {
 
                         valid( n );
 
@@ -146,7 +148,7 @@
 
                             scope.$applyAsync(function() {
 
-                                scope.$parent.editor.data[model] = handleValue( val );
+                                scope.$parent.editor.data[ model ] = handleValue( val );
                             });
                         }
                     });
