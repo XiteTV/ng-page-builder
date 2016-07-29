@@ -6,7 +6,7 @@
 
     angular
         .module('npb')
-        .factory('$dataResource', function( $resource, $cachedResource, resourceUrlBuilder, resourceHandler, notifier, message ) {
+        .factory('$dataResource', function( $resource, $q, $cachedResource, resourceUrlBuilder, resourceHandler, notifier, message ) {
 
             var defaultResponseTransform, defaultActions, rpcAction, defaultSettings;
 
@@ -174,7 +174,7 @@
 
                             notifier.notify( 'error', msg );
 
-                            return httpResponse;
+                            return $q.reject( httpResponse );
                         }
                     }
                 }

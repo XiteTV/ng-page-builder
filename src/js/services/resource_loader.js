@@ -237,7 +237,7 @@
          */
         this.response = function() {
 
-            return function(data, headers) {
+            return function( data, headers ) {
 
                 var contentRangeString, pattern, result, respondedRange, respondedFrom, respondedTo, respondedItems;
 

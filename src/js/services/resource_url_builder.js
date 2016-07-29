@@ -16,7 +16,7 @@
 
                 var normalizedName;
 
-                normalizedName = resourceName.replace(/\_/,'-');
+                normalizedName = resourceName.replace(/\_/g,'-');
 
                 return api_url+'/' + normalizedName + '/:pid';
             }
