@@ -4788,7 +4788,6 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
             var sorting = new Sorting();
             var self = this;
             var contentRange = new ContentRange(resourceName);
-            var resourceSettings = settings.resource || {};
 
 
             var resource = $dataResource( resourceName, null, contentRange);
@@ -5076,7 +5075,7 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
 
             var defaultResponseTransform, defaultActions, rpcAction, defaultSettings;
 
-            defaultResponseTransform = [angular.fromJson, copyState ];
+            defaultResponseTransform = [angular.fromJson, resourceHandler.copyState ];
 
             defaultActions = {
                 query : {
@@ -5092,7 +5091,7 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
 
                                     if (data.hasOwnProperty(p)) {
 
-                                        data[p] = copyState(data[p]);
+                                        data[p] = resourceHandler.copyState(data[p]);
                                     }
                                 }
                             }
@@ -5137,7 +5136,7 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
 
                             if (data.hasOwnProperty(p)) {
 
-                                data[p] = copyState(data[p]);
+                                data[p] = resourceHandler.copyState(data[p]);
                             }
                         }
                     }
@@ -5172,22 +5171,22 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                 }
             };
 
-            function copyState( data ) {
-
-
-                data.$serverState = {};
-
-
-                for (var p in data) {
-
-                    if (data.hasOwnProperty(p)) {
-
-                        data.$serverState[p] = _.clone(data[p]);
-                    }
-                }
-
-                return data;
-            }
+            // function copyState( data ) {
+            //
+            //
+            //     data.$serverState = {};
+            //
+            //
+            //     for (var p in data) {
+            //
+            //         if (data.hasOwnProperty(p)) {
+            //
+            //             data.$serverState[p] = _.clone(data[p]);
+            //         }
+            //     }
+            //
+            //     return data;
+            // }
 
             defaultSettings = {
 

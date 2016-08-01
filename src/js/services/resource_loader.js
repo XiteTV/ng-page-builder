@@ -93,7 +93,6 @@
             var sorting = new Sorting();
             var self = this;
             var contentRange = new ContentRange(resourceName);
-            var resourceSettings = settings.resource || {};
 
 
             var resource = $dataResource( resourceName, null, contentRange);

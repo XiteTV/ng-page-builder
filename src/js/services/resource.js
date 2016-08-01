@@ -10,7 +10,7 @@
 
             var defaultResponseTransform, defaultActions, rpcAction, defaultSettings;
 
-            defaultResponseTransform = [angular.fromJson, copyState ];
+            defaultResponseTransform = [angular.fromJson, resourceHandler.copyState ];
 
             defaultActions = {
                 query : {
@@ -26,7 +26,7 @@
 
                                     if (data.hasOwnProperty(p)) {
 
-                                        data[p] = copyState(data[p]);
+                                        data[p] = resourceHandler.copyState(data[p]);
                                     }
                                 }
                             }
@@ -71,7 +71,7 @@
 
                             if (data.hasOwnProperty(p)) {
 
-                                data[p] = copyState(data[p]);
+                                data[p] = resourceHandler.copyState(data[p]);
                             }
                         }
                     }
@@ -106,22 +106,22 @@
                 }
             };
 
-            function copyState( data ) {
-
-
-                data.$serverState = {};
-
-
-                for (var p in data) {
-
-                    if (data.hasOwnProperty(p)) {
-
-                        data.$serverState[p] = _.clone(data[p]);
-                    }
-                }
-
-                return data;
-            }
+            // function copyState( data ) {
+            //
+            //
+            //     data.$serverState = {};
+            //
+            //
+            //     for (var p in data) {
+            //
+            //         if (data.hasOwnProperty(p)) {
+            //
+            //             data.$serverState[p] = _.clone(data[p]);
+            //         }
+            //     }
+            //
+            //     return data;
+            // }
 
             defaultSettings = {
 
