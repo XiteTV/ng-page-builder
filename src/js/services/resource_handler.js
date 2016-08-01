@@ -67,6 +67,22 @@
                     }
 
                     return dataToPatch;
+                },
+                copyState : function copyState( data ) {
+
+
+                    data.$serverState = {};
+
+
+                    for (var p in data) {
+
+                        if (data.hasOwnProperty(p)) {
+
+                            data.$serverState[p] = _.clone(data[p]);
+                        }
+                    }
+
+                    return data;
                 }
             };
 

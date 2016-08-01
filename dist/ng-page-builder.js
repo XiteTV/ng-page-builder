@@ -4671,6 +4671,22 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                     }
 
                     return dataToPatch;
+                },
+                copyState : function copyState( data ) {
+
+
+                    data.$serverState = {};
+
+
+                    for (var p in data) {
+
+                        if (data.hasOwnProperty(p)) {
+
+                            data.$serverState[p] = _.clone(data[p]);
+                        }
+                    }
+
+                    return data;
                 }
             };
 
@@ -4763,17 +4779,19 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
             return this.fields.join(',');
         };
     }
-    function resourceLoaderFactory( $dataResourceNew ) {
+    function resourceLoaderFactory( $dataResource ) {
 
-        return function ResourceLoader( resourceName ) {
+        return function ResourceLoader( resourceName, settings ) {
 
             this.data = [];
             var filters = {};
             var sorting = new Sorting();
             var self = this;
             var contentRange = new ContentRange(resourceName);
+            var resourceSettings = settings.resource || {};
 
-            var resource = $dataResourceNew( resourceName, null, contentRange);
+
+            var resource = $dataResource( resourceName, null, contentRange);
 
             function load() {
 
@@ -5058,7 +5076,7 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
 
             var defaultResponseTransform, defaultActions, rpcAction, defaultSettings;
 
-            defaultResponseTransform = [angular.fromJson, copyState];
+            defaultResponseTransform = [angular.fromJson, resourceHandler.copyState ];
 
             defaultActions = {
                 query : {
@@ -5074,7 +5092,7 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
 
                                     if (data.hasOwnProperty(p)) {
 
-                                        data[p] = copyState(data[p]);
+                                        data[p] = resourceHandler.copyState(data[p]);
                                     }
                                 }
                             }
@@ -5119,7 +5137,7 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
 
                             if (data.hasOwnProperty(p)) {
 
-                                data[p] = copyState(data[p]);
+                                data[p] = resourceHandler.copyState(data[p]);
                             }
                         }
                     }
@@ -5153,23 +5171,6 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                     }
                 }
             };
-
-            function copyState( data ) {
-
-
-                data.$serverState = {};
-
-
-                for (var p in data) {
-
-                    if (data.hasOwnProperty(p)) {
-
-                        data.$serverState[p] = _.clone(data[p]);
-                    }
-                }
-
-                return data;
-            }
 
             defaultSettings = {
 
@@ -5243,7 +5244,8 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                     decoratedWithNotifier,
                     rpcConf,
                     currentQuery,
-                    newResource;
+                    newResource,
+                    extraActions;
 
                 decoratedWithNotifier = decorateWithNotifications( resourcesName );
 
@@ -5255,7 +5257,9 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                 rpcConf = currentSettings.hasRpc ? rpcAction : {};
                 currentQuery = queryActionFactory( contentRange );
 
+                if ( currentSettings.extraActions ) {
 
+                }
 
                 currentActions = angular.extend( {}, decoratedWithNotifier, currentSettings.actions, currentQuery, rpcConf )
 

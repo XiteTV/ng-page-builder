@@ -84,17 +84,19 @@
             return this.fields.join(',');
         };
     }
-    function resourceLoaderFactory( $dataResourceNew ) {
+    function resourceLoaderFactory( $dataResource ) {
 
-        return function ResourceLoader( resourceName ) {
+        return function ResourceLoader( resourceName, settings ) {
 
             this.data = [];
             var filters = {};
             var sorting = new Sorting();
             var self = this;
             var contentRange = new ContentRange(resourceName);
+            var resourceSettings = settings.resource || {};
 
-            var resource = $dataResourceNew( resourceName, null, contentRange);
+
+            var resource = $dataResource( resourceName, null, contentRange);
 
             function load() {
 

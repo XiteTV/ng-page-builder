@@ -10,7 +10,7 @@
 
             var defaultResponseTransform, defaultActions, rpcAction, defaultSettings;
 
-            defaultResponseTransform = [angular.fromJson, copyState];
+            defaultResponseTransform = [angular.fromJson, resourceHandler.copyState ];
 
             defaultActions = {
                 query : {
@@ -26,7 +26,7 @@
 
                                     if (data.hasOwnProperty(p)) {
 
-                                        data[p] = copyState(data[p]);
+                                        data[p] = resourceHandler.copyState(data[p]);
                                     }
                                 }
                             }
@@ -71,7 +71,7 @@
 
                             if (data.hasOwnProperty(p)) {
 
-                                data[p] = copyState(data[p]);
+                                data[p] = resourceHandler.copyState(data[p]);
                             }
                         }
                     }
@@ -105,23 +105,6 @@
                     }
                 }
             };
-
-            function copyState( data ) {
-
-
-                data.$serverState = {};
-
-
-                for (var p in data) {
-
-                    if (data.hasOwnProperty(p)) {
-
-                        data.$serverState[p] = _.clone(data[p]);
-                    }
-                }
-
-                return data;
-            }
 
             defaultSettings = {
 
@@ -195,7 +178,8 @@
                     decoratedWithNotifier,
                     rpcConf,
                     currentQuery,
-                    newResource;
+                    newResource,
+                    extraActions;
 
                 decoratedWithNotifier = decorateWithNotifications( resourcesName );
 
@@ -207,7 +191,9 @@
                 rpcConf = currentSettings.hasRpc ? rpcAction : {};
                 currentQuery = queryActionFactory( contentRange );
 
+                if ( currentSettings.extraActions ) {
 
+                }
 
                 currentActions = angular.extend( {}, decoratedWithNotifier, currentSettings.actions, currentQuery, rpcConf )
 
