@@ -4790,7 +4790,7 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
             var contentRange = new ContentRange(resourceName);
 
 
-            var resource = $dataResource( resourceName, null, contentRange);
+            var resource = $dataResource( resourceName, (settings || null), contentRange);
 
             function load() {
 
@@ -5171,23 +5171,6 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                 }
             };
 
-            // function copyState( data ) {
-            //
-            //
-            //     data.$serverState = {};
-            //
-            //
-            //     for (var p in data) {
-            //
-            //         if (data.hasOwnProperty(p)) {
-            //
-            //             data.$serverState[p] = _.clone(data[p]);
-            //         }
-            //     }
-            //
-            //     return data;
-            // }
-
             defaultSettings = {
 
                 paramDefaults : { pid : '@id' },
@@ -5274,10 +5257,12 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                 currentQuery = queryActionFactory( contentRange );
 
                 if ( currentSettings.extraActions ) {
-
+                    extraActions = currentSettings.extraActions;
+                } else {
+                    extraActions = {};
                 }
 
-                currentActions = angular.extend( {}, decoratedWithNotifier, currentSettings.actions, currentQuery, rpcConf )
+                currentActions = angular.extend( {}, decoratedWithNotifier, currentSettings.actions, currentQuery, rpcConf, extraActions );
 
                 if ( currentSettings.cached ) {
 

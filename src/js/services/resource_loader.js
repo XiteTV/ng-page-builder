@@ -95,7 +95,7 @@
             var contentRange = new ContentRange(resourceName);
 
 
-            var resource = $dataResource( resourceName, null, contentRange);
+            var resource = $dataResource( resourceName, (settings || null), contentRange);
 
             function load() {
 

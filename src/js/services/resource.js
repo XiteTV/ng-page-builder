@@ -106,23 +106,6 @@
                 }
             };
 
-            // function copyState( data ) {
-            //
-            //
-            //     data.$serverState = {};
-            //
-            //
-            //     for (var p in data) {
-            //
-            //         if (data.hasOwnProperty(p)) {
-            //
-            //             data.$serverState[p] = _.clone(data[p]);
-            //         }
-            //     }
-            //
-            //     return data;
-            // }
-
             defaultSettings = {
 
                 paramDefaults : { pid : '@id' },
@@ -209,10 +192,12 @@
                 currentQuery = queryActionFactory( contentRange );
 
                 if ( currentSettings.extraActions ) {
-
+                    extraActions = currentSettings.extraActions;
+                } else {
+                    extraActions = {};
                 }
 
-                currentActions = angular.extend( {}, decoratedWithNotifier, currentSettings.actions, currentQuery, rpcConf )
+                currentActions = angular.extend( {}, decoratedWithNotifier, currentSettings.actions, currentQuery, rpcConf, extraActions );
 
                 if ( currentSettings.cached ) {
 
