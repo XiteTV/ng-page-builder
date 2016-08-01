@@ -5076,7 +5076,7 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
 
             var defaultResponseTransform, defaultActions, rpcAction, defaultSettings;
 
-            defaultResponseTransform = [angular.fromJson, resourceHandler.copyState ];
+            defaultResponseTransform = [angular.fromJson, copyState ];
 
             defaultActions = {
                 query : {
@@ -5092,7 +5092,7 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
 
                                     if (data.hasOwnProperty(p)) {
 
-                                        data[p] = resourceHandler.copyState(data[p]);
+                                        data[p] = copyState(data[p]);
                                     }
                                 }
                             }
@@ -5137,7 +5137,7 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
 
                             if (data.hasOwnProperty(p)) {
 
-                                data[p] = resourceHandler.copyState(data[p]);
+                                data[p] = copyState(data[p]);
                             }
                         }
                     }
@@ -5171,6 +5171,23 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                     }
                 }
             };
+
+            function copyState( data ) {
+
+
+                data.$serverState = {};
+
+
+                for (var p in data) {
+
+                    if (data.hasOwnProperty(p)) {
+
+                        data.$serverState[p] = _.clone(data[p]);
+                    }
+                }
+
+                return data;
+            }
 
             defaultSettings = {
 
