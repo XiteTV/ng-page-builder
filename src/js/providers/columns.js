@@ -21,7 +21,8 @@
                 on : null,
                 resolver : null,
                 visible : true,
-                hide_able : true
+                hide_able : true,
+                width: null
             };
 
 
