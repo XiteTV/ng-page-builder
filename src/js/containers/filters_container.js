@@ -38,6 +38,37 @@
                         }
                     });
 
+                    var enterListener = function( event ) {
+                        //prevent other than enter
+                        if (event.which !== 13)
+                            return;
+
+                        console.log('enter',event);
+
+
+                        var eventScope = angular.element( event.target ).scope();
+
+
+                        if ( eventScope && ( eventScope.fc || eventScope.$parent.fc )) {
+
+                            var data = this.getConditions();
+                            data.$event = event;
+
+                            actions.call( 'action:filters', data );
+
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+
+                    }.bind( this );
+
+                    document.addEventListener('keydown', enterListener, true );
+
+                    $scope.$on('$destroy', function () {
+
+                        document.removeEventListener('keydown', enterListener, true );
+                    });
+
                     this.getConditions = function() {
 
                         return states;

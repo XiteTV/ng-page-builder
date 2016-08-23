@@ -13,15 +13,16 @@
                 restrict: 'E',
                 require : '^npbFiltersContainer',
                 templateUrl : 'partials/ui/filter/select.html',
-                controller: function( $scope, Dictionary, currentFilters ) {
+                controller: function( $scope, $element, Dictionary, currentFilters ) {
 
-                    var name, filter , data, state, single, displayProperty;
+                    var name, filter , data, state, single, displayProperty, input;
 
                     filter = $scope.filter;
                     name = filter.name;
                     data = Dictionary.get( filter.data );
                     single = !filter.multi;
                     displayProperty = filter.displayProperty;
+                    input = $element[0].querySelector('[tabindex]');
 
 
                     this.open = function() {
@@ -57,6 +58,7 @@
                         $scope.fc.setState(name, value);
 
                         this.displayValue = display.length ? display.join(', ') : '-';
+                        input.focus();
                     };
 
                     function _in( id, array) {
