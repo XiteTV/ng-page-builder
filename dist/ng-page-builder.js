@@ -2142,6 +2142,37 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                         }
                     });
 
+                    var enterListener = function( event ) {
+                        //prevent other than enter
+                        if (event.which !== 13)
+                            return;
+
+                        console.log('enter',event);
+
+
+                        var eventScope = angular.element( event.target ).scope();
+
+
+                        if ( eventScope && ( eventScope.fc || eventScope.$parent.fc )) {
+
+                            var data = this.getConditions();
+                            data.$event = event;
+
+                            actions.call( 'action:filters', data );
+
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+
+                    }.bind( this );
+
+                    document.addEventListener('keydown', enterListener, true );
+
+                    $scope.$on('$destroy', function () {
+
+                        document.removeEventListener('keydown', enterListener, true );
+                    });
+
                     this.getConditions = function() {
 
                         return states;
@@ -2481,15 +2512,16 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                 restrict: 'E',
                 require : '^npbFiltersContainer',
                 templateUrl : 'partials/ui/filter/select.html',
-                controller: function( $scope, Dictionary, currentFilters ) {
+                controller: function( $scope, $element, Dictionary, currentFilters ) {
 
-                    var name, filter , data, state, single, displayProperty;
+                    var name, filter , data, state, single, displayProperty, input;
 
                     filter = $scope.filter;
                     name = filter.name;
                     data = Dictionary.get( filter.data );
                     single = !filter.multi;
                     displayProperty = filter.displayProperty;
+                    input = $element[0].querySelector('[tabindex]');
 
 
                     this.open = function() {
@@ -2525,6 +2557,7 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                         $scope.fc.setState(name, value);
 
                         this.displayValue = display.length ? display.join(', ') : '-';
+                        input.focus();
                     };
 
                     function _in( id, array) {
@@ -5498,7 +5531,7 @@ angular.module('npb').run(['$templateCache', function($templateCache) {
   $templateCache.put('partials/ui/filter/boolean.html',
     "<div class=\"filter\">\n" +
     "    <div class=\"label\">{{ filter.label }}</div>\n" +
-    "    <div class=\"input\">{{ displayValue }}</div>\n" +
+    "    <div tabindex=\"0\" class=\"input\">{{ displayValue }}</div>\n" +
     "</div>"
   );
 
@@ -5506,7 +5539,7 @@ angular.module('npb').run(['$templateCache', function($templateCache) {
   $templateCache.put('partials/ui/filter/filter.html',
     "<div class=\"filter\">\n" +
     "    <div class=\"label\">{{ filter.label }}</div>\n" +
-    "    <div ng-if=\"!filter.kbDriven\" class=\"input\">{{ fbc.displayValue }}</div>\n" +
+    "    <div tabindex=\"0\" ng-if=\"!filter.kbDriven\" class=\"input\">{{ fbc.displayValue }}</div>\n" +
     "    <input ng-if=\"filter.kbDriven\" class=\"input\" ng-model=\"$parent.filterValue\" />\n" +
     "</div>"
   );
@@ -5523,7 +5556,7 @@ angular.module('npb').run(['$templateCache', function($templateCache) {
   $templateCache.put('partials/ui/filter/select.html',
     "<div class=\"filter\">\n" +
     "    <div class=\"label\">{{ filter.label }}</div>\n" +
-    "    <div class=\"input\">{{ fbc.displayValue }}</div>\n" +
+    "    <div tabindex=\"0\" class=\"input\">{{ fbc.displayValue }}</div>\n" +
     "</div>"
   );
 
