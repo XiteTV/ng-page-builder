@@ -12,62 +12,11 @@
             return {
                 replace : false,
                 restrict : 'E',
-                controller : function($scope) {
+                controller : function( ) {
 
                     var states = filtersState;
                     var filters = {};
-
-
-                    var openFilter;
-
-                    $scope.$on('filter:clicked', function( $event, filter, state ) {
-
-                        var id;
-                        id = filterDialogMapper.getIdByType( filter.type );
-
-                        openFilter = filter;
-
-                        dialog.open( id , filter.label, { filter: filter, state: state } );
-                    });
-
-                    $scope.$on('dialog:ok', function($event, options, result) {
-
-                        if ( options.filter && openFilter && openFilter.name === options.filter.name) {
-
-                            filters[openFilter.name].update(result);
-                        }
-                    });
-
-                    var enterListener = function( event ) {
-                        //prevent other than enter
-                        if (event.which !== 13)
-                            return;
-
-                        console.log('enter',event);
-
-
-                        var eventScope = angular.element( event.target ).scope();
-
-
-                        if ( eventScope && ( eventScope.fc || eventScope.$parent.fc )) {
-
-                            var data = this.getConditions();
-                            data.$event = event;
-
-                            actions.call( 'action:filters', data );
-
-                            event.preventDefault();
-                            event.stopPropagation();
-                        }
-
-                    }.bind( this );
-
-                    document.addEventListener('keydown', enterListener, true );
-
-                    $scope.$on('$destroy', function () {
-
-                        document.removeEventListener('keydown', enterListener, true );
-                    });
+                    
 
                     this.getConditions = function() {
 

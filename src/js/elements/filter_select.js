@@ -6,14 +6,14 @@
 
     angular
         .module('npb')
-        .directive('npbFilterSelect', function() {
+        .directive('npbFilterSelect', function( actions ) {
 
             return {
                 replace: true,
                 restrict: 'E',
                 require : '^npbFiltersContainer',
                 templateUrl : 'partials/ui/filter/select.html',
-                controller: function( $scope, $element, Dictionary, currentFilters ) {
+                controller: function( $scope, $element, Dictionary, currentFilters, dialog, filterDialogMapper ) {
 
                     var name, filter , data, state, single, displayProperty, input;
 
@@ -24,10 +24,22 @@
                     displayProperty = filter.displayProperty;
                     input = $element[0].querySelector('[tabindex]');
 
+                    var self = this;
 
                     this.open = function() {
+                        
+                        var id = filterDialogMapper.getIdByType( filter.type );
+                        
+                        dialog
+                            .openPromise( id, filter.label, { state : state, filter : filter })
+                            .then( function( result ) {
 
-                        $scope.$emit('filter:clicked', filter, state );
+                                self.update( result );
+                            })
+                            .finally( function( ) {
+
+                                input.focus();
+                            });
                     };
 
                     this.update = function ( wSet ) {
@@ -58,7 +70,6 @@
                         $scope.fc.setState(name, value);
 
                         this.displayValue = display.length ? display.join(', ') : '-';
-                        input.focus();
                     };
 
                     function _in( id, array) {
@@ -88,7 +99,8 @@
                             });
                         }
                         $scope.fc.bind( name, this );
-                        this.update(state);
+                        
+                        this.update( state );
                     };
 
                     _construct.call(this);
@@ -96,11 +108,40 @@
                 controllerAs : 'fbc',
                 link : function( $scope, $element, $attributes, npbFiltersController ) {
 
-                    var name;
+                    var name, input, enterListener, spaceListener;
 
                     name = $scope.filter.name;
+                    input = $element[0].querySelector('.input');
+
+                    enterListener = function( keyboardEvent ) {
+
+                        if ( keyboardEvent.which !== 13 || input !== document.activeElement)
+                            return;
+
+                        var data = $scope.$parent.fc.getConditions();
+                        data.$event = keyboardEvent;
+
+                        actions.call( 'action:filters', data );
+
+                        keyboardEvent.preventDefault();
+                        keyboardEvent.stopPropagation();
+                    };
+
+                    spaceListener = function( keyboardEvent ) {
+
+                        if ( keyboardEvent.which !== 32 || input !== document.activeElement)
+                            return;
+
+                        $scope.fbc.open();
+                    };
+
+                    input.addEventListener('keydown', enterListener, false );
+                    input.addEventListener('keydown', spaceListener, false );
 
                     $scope.$on('$destroy', function() {
+
+                        input.removeEventListener('keydown', enterListener, false );
+                        input.removeEventListener('keydown', spaceListener, false );
 
                         npbFiltersController.unbind(name)
                     });

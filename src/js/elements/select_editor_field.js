@@ -52,6 +52,7 @@
                             name : model,
                             mode : mode,
                             multi : multi,
+                            allowEmptyTags : (type === 'search'),
                             displayProperty : prop
                         };
                     }
