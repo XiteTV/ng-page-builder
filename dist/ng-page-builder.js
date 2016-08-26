@@ -2715,9 +2715,9 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                 restrict: 'E',
                 template : '<p data-pseudo-input>{{ displayValue }}</p>',
                 controller: function ( $scope ) {
-                    
+
                     this.$valid;
-                    
+
                 },
                 controllerAs : 'npbSi',
                 link : function( scope, element ) {
@@ -2738,11 +2738,11 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
 
                     validators = scope.configuration.validators || [];
                     required = validators.indexOf('required') > -1;
-                    
+
 
                     function getDialogId() {
 
-                         return { search : 'dictionary_searcher', select : 'dictionary_chooser' }[ type ];
+                        return { search : 'dictionary_searcher', select : 'dictionary_chooser' }[ type ];
                     }
 
                     function getConfig( ) {
@@ -2784,10 +2784,19 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                         state = getState();
                         title = getTitle();
 
-                        dialog.open(did, title, {
-                            filter : options,
-                            state : state
-                        });
+                        dialog.openPromise(did, title, {
+                                filter : options,
+                                state : state
+                            })
+                            .then( function( result ) {
+                                
+                                var val = result instanceof WeakSet ? weakSetDictionary( dataSrc, result ) : result;
+
+                                scope.$applyAsync(function() {
+
+                                    scope.$parent.editor.data[ model ] = handleValue( val );
+                                });
+                            });
                     }
 
 
@@ -2797,7 +2806,7 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                         ret = value;
 
                         if (!multi) {
-                            
+
                             ret = value[0];
                         }
 
@@ -2838,25 +2847,9 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                     });
 
 
-
-                    scope.$on('dialog:ok', function( $event, options, result ) {
-
-                        var val;
-
-                        if (options.filter && model === options.filter.name) {
-
-                            val = result instanceof WeakSet ? weakSetDictionary( dataSrc, result ) : result;
-
-                            scope.$applyAsync(function() {
-
-                                scope.$parent.editor.data[ model ] = handleValue( val );
-                            });
-                        }
-                    });
-
                     if (!readonly && dataSrc) {
 
-                        element.on('click', handleOpen) ;
+                        element.on('click', handleOpen ) ;
                     }
                 }
             }
