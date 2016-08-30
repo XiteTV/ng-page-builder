@@ -1,9 +1,4 @@
 /**
- * Created by jacek on 23.02.16.
- */
-
-
-/**
  * Created by jacek on 12.01.16.
  */
 
@@ -18,7 +13,7 @@
                 restrict: 'E',
                 require : '^npbFiltersContainer',
                 templateUrl : 'partials/ui/filter/boolean.html',
-                controller: function( $scope, currentFilters ) {
+                controller: function( $scope, currentFilters, $element ) {
 
                     var name, filter, state, trueLabel, falseLabel;
 

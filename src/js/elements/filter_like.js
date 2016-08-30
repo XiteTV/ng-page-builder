@@ -6,7 +6,7 @@
 
     angular
         .module('npb')
-        .directive('npbFilterLike', function() {
+        .directive('npbFilterLike', function( actions ) {
 
             return {
                 replace: true,
@@ -27,13 +27,10 @@
                 controllerAs : 'fbc',
                 link : function( $scope, $element, $attributes, npbFiltersController ) {
 
-                    var name;
+                    var name, input;
 
                     name = $scope.filter.name;
-                    $scope.$on('$destroy', function() {
-
-                        npbFiltersController.unbind(name)
-                    });
+                    input = $element[0].querySelector('input');
 
                     if ($scope.filter.readonly) {
 
@@ -46,6 +43,30 @@
                             npbFiltersController.setState( name, v );
                         });
                     }
+
+                    var enterListener = function( keyboardEvent ) {
+
+                        if ( keyboardEvent.which !== 13 )
+                            return;
+
+                        var data = $scope.$parent.fc.getConditions();
+                        data.$event = keyboardEvent;
+
+                        actions.call( 'action:filters', data );
+
+                        keyboardEvent.preventDefault();
+                        keyboardEvent.stopPropagation();
+
+                    };
+
+                    input.addEventListener('keydown', enterListener, true );
+
+
+                    $scope.$on('$destroy', function() {
+
+                        input.removeEventListener('keydown', enterListener, true );
+                        npbFiltersController.unbind(name)
+                    });
                 }
             };
         });

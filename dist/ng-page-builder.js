@@ -2116,62 +2116,11 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
             return {
                 replace : false,
                 restrict : 'E',
-                controller : function($scope) {
+                controller : function( ) {
 
                     var states = filtersState;
                     var filters = {};
-
-
-                    var openFilter;
-
-                    $scope.$on('filter:clicked', function( $event, filter, state ) {
-
-                        var id;
-                        id = filterDialogMapper.getIdByType( filter.type );
-
-                        openFilter = filter;
-
-                        dialog.open( id , filter.label, { filter: filter, state: state } );
-                    });
-
-                    $scope.$on('dialog:ok', function($event, options, result) {
-
-                        if ( options.filter && openFilter && openFilter.name === options.filter.name) {
-
-                            filters[openFilter.name].update(result);
-                        }
-                    });
-
-                    var enterListener = function( event ) {
-                        //prevent other than enter
-                        if (event.which !== 13)
-                            return;
-
-                        console.log('enter',event);
-
-
-                        var eventScope = angular.element( event.target ).scope();
-
-
-                        if ( eventScope && ( eventScope.fc || eventScope.$parent.fc )) {
-
-                            var data = this.getConditions();
-                            data.$event = event;
-
-                            actions.call( 'action:filters', data );
-
-                            event.preventDefault();
-                            event.stopPropagation();
-                        }
-
-                    }.bind( this );
-
-                    document.addEventListener('keydown', enterListener, true );
-
-                    $scope.$on('$destroy', function () {
-
-                        document.removeEventListener('keydown', enterListener, true );
-                    });
+                    
 
                     this.getConditions = function() {
 
@@ -2236,11 +2185,6 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
         })
 })(angular);
 /**
- * Created by jacek on 23.02.16.
- */
-
-
-/**
  * Created by jacek on 12.01.16.
  */
 
@@ -2255,7 +2199,7 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                 restrict: 'E',
                 require : '^npbFiltersContainer',
                 templateUrl : 'partials/ui/filter/boolean.html',
-                controller: function( $scope, currentFilters ) {
+                controller: function( $scope, currentFilters, $element ) {
 
                     var name, filter, state, trueLabel, falseLabel;
 
@@ -2361,7 +2305,7 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
 
     angular
         .module('npb')
-        .directive('npbFilterLike', function() {
+        .directive('npbFilterLike', function( actions ) {
 
             return {
                 replace: true,
@@ -2382,13 +2326,10 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                 controllerAs : 'fbc',
                 link : function( $scope, $element, $attributes, npbFiltersController ) {
 
-                    var name;
+                    var name, input;
 
                     name = $scope.filter.name;
-                    $scope.$on('$destroy', function() {
-
-                        npbFiltersController.unbind(name)
-                    });
+                    input = $element[0].querySelector('input');
 
                     if ($scope.filter.readonly) {
 
@@ -2401,6 +2342,30 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                             npbFiltersController.setState( name, v );
                         });
                     }
+
+                    var enterListener = function( keyboardEvent ) {
+
+                        if ( keyboardEvent.which !== 13 )
+                            return;
+
+                        var data = $scope.$parent.fc.getConditions();
+                        data.$event = keyboardEvent;
+
+                        actions.call( 'action:filters', data );
+
+                        keyboardEvent.preventDefault();
+                        keyboardEvent.stopPropagation();
+
+                    };
+
+                    input.addEventListener('keydown', enterListener, true );
+
+
+                    $scope.$on('$destroy', function() {
+
+                        input.removeEventListener('keydown', enterListener, true );
+                        npbFiltersController.unbind(name)
+                    });
                 }
             };
         });
@@ -2413,29 +2378,41 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
 
     angular
         .module('npb')
-        .directive('npbFilterSearch', function() {
+        .directive('npbFilterSearch', function( actions ) {
 
             return {
                 replace: true,
                 restrict: 'E',
                 require : '^npbFiltersContainer',
-                templateUrl : 'partials/ui/filter/filter.html',
-                controller: function( $scope, Dictionary, currentFilters ) {
+                templateUrl : 'partials/ui/filter/select.html',
+                controller: function( $scope, $element, Dictionary, currentFilters, filterDialogMapper, dialog ) {
 
-                    var name, filter , data, state, single, displayProperty;
+                    var name, filter, input, data, state, displayProperty, self;
 
                     filter = $scope.filter;
                     displayProperty = filter.displayProperty;
                     name = filter.name;
                     data = Dictionary.get(filter.data);
-                    single = !filter.multi;
+                    input = $element[0].querySelector('.input');
+                    self = this;
 
                     this.open = function() {
 
-                        $scope.$emit('filter:clicked', filter, state );
+                        var id = filterDialogMapper.getIdByType( filter.type );
+
+                        dialog
+                            .openPromise( id, filter.label, { state : state, filter : filter })
+                            .then( function( result ) {
+
+                                self.update( result );
+                            })
+                            .finally( function( ) {
+
+                                input.focus();
+                            });
                     };
 
-                    this.update = function(selection ) {
+                    this.update = function( selection ) {
 
                         var i, value, display;
                         state = selection;
@@ -2452,6 +2429,7 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                         }
 
                         $scope.fc.setState(name, value);
+
                         this.displayValue = display.length ? display.join(', ') : '-';
                     };
 
@@ -2471,23 +2449,57 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                         }
 
                         $scope.fc.bind( name, this );
-                        this.update(state);
+
+                        this.update( state );
                     }
                     _construct.call(this);
                 },
                 controllerAs : 'fbc',
                 link : function( $scope, $element, $attributes, npbFiltersController ) {
 
-                    var name;
+                    var name, input, enterListener, spaceListener;
 
                     name = $scope.filter.name;
+                    input = $element[0].querySelector('.input');
+
+                    enterListener = function( keyboardEvent ) {
+
+                        if ( keyboardEvent.which !== 13 || input !== document.activeElement)
+                            return;
+
+                        var data = $scope.$parent.fc.getConditions();
+                        data.$event = keyboardEvent;
+
+                        actions.call( 'action:filters', data );
+
+                        keyboardEvent.preventDefault();
+                        keyboardEvent.stopPropagation();
+                    };
+
+                    spaceListener = function( keyboardEvent ) {
+
+                        if ( keyboardEvent.which !== 32 || input !== document.activeElement)
+                            return;
+
+                        $scope.fbc.open();
+                    };
 
                     $scope.$on('$destroy', function() {
 
+                        input.removeEventListener('keydown', enterListener, true );
+                        input.removeEventListener('keydown', spaceListener, true );
                         npbFiltersController.unbind(name)
                     });
 
-                    if ($scope.filter.readonly) return;
+                    if ($scope.filter.readonly) {
+
+                        angular.element( input ).removeAttribute('tabindex');
+                        return;
+                    }
+
+
+                    input.addEventListener('keydown', enterListener, true );
+                    input.addEventListener('keydown', spaceListener, true );
 
                     $element.bind('click', function() {
 
@@ -2505,14 +2517,14 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
 
     angular
         .module('npb')
-        .directive('npbFilterSelect', function() {
+        .directive('npbFilterSelect', function( actions ) {
 
             return {
                 replace: true,
                 restrict: 'E',
                 require : '^npbFiltersContainer',
                 templateUrl : 'partials/ui/filter/select.html',
-                controller: function( $scope, $element, Dictionary, currentFilters ) {
+                controller: function( $scope, $element, Dictionary, currentFilters, dialog, filterDialogMapper ) {
 
                     var name, filter , data, state, single, displayProperty, input;
 
@@ -2523,10 +2535,22 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                     displayProperty = filter.displayProperty;
                     input = $element[0].querySelector('[tabindex]');
 
+                    var self = this;
 
                     this.open = function() {
+                        
+                        var id = filterDialogMapper.getIdByType( filter.type );
+                        
+                        dialog
+                            .openPromise( id, filter.label, { state : state, filter : filter })
+                            .then( function( result ) {
 
-                        $scope.$emit('filter:clicked', filter, state );
+                                self.update( result );
+                            })
+                            .finally( function( ) {
+
+                                input.focus();
+                            });
                     };
 
                     this.update = function ( wSet ) {
@@ -2557,7 +2581,6 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                         $scope.fc.setState(name, value);
 
                         this.displayValue = display.length ? display.join(', ') : '-';
-                        input.focus();
                     };
 
                     function _in( id, array) {
@@ -2587,7 +2610,8 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                             });
                         }
                         $scope.fc.bind( name, this );
-                        this.update(state);
+                        
+                        this.update( state );
                     };
 
                     _construct.call(this);
@@ -2595,11 +2619,40 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                 controllerAs : 'fbc',
                 link : function( $scope, $element, $attributes, npbFiltersController ) {
 
-                    var name;
+                    var name, input, enterListener, spaceListener;
 
                     name = $scope.filter.name;
+                    input = $element[0].querySelector('.input');
+
+                    enterListener = function( keyboardEvent ) {
+
+                        if ( keyboardEvent.which !== 13 || input !== document.activeElement)
+                            return;
+
+                        var data = $scope.$parent.fc.getConditions();
+                        data.$event = keyboardEvent;
+
+                        actions.call( 'action:filters', data );
+
+                        keyboardEvent.preventDefault();
+                        keyboardEvent.stopPropagation();
+                    };
+
+                    spaceListener = function( keyboardEvent ) {
+
+                        if ( keyboardEvent.which !== 32 || input !== document.activeElement)
+                            return;
+
+                        $scope.fbc.open();
+                    };
+
+                    input.addEventListener('keydown', enterListener, false );
+                    input.addEventListener('keydown', spaceListener, false );
 
                     $scope.$on('$destroy', function() {
+
+                        input.removeEventListener('keydown', enterListener, false );
+                        input.removeEventListener('keydown', spaceListener, false );
 
                         npbFiltersController.unbind(name)
                     });
@@ -2662,9 +2715,9 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                 restrict: 'E',
                 template : '<p data-pseudo-input>{{ displayValue }}</p>',
                 controller: function ( $scope ) {
-                    
+
                     this.$valid;
-                    
+
                 },
                 controllerAs : 'npbSi',
                 link : function( scope, element ) {
@@ -2685,11 +2738,11 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
 
                     validators = scope.configuration.validators || [];
                     required = validators.indexOf('required') > -1;
-                    
+
 
                     function getDialogId() {
 
-                         return { search : 'dictionary_searcher', select : 'dictionary_chooser' }[ type ];
+                        return { search : 'dictionary_searcher', select : 'dictionary_chooser' }[ type ];
                     }
 
                     function getConfig( ) {
@@ -2699,6 +2752,7 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                             name : model,
                             mode : mode,
                             multi : multi,
+                            allowEmptyTags : (type === 'search'),
                             displayProperty : prop
                         };
                     }
@@ -2730,10 +2784,19 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                         state = getState();
                         title = getTitle();
 
-                        dialog.open(did, title, {
-                            filter : options,
-                            state : state
-                        });
+                        dialog.openPromise(did, title, {
+                                filter : options,
+                                state : state
+                            })
+                            .then( function( result ) {
+                                
+                                var val = result instanceof WeakSet ? weakSetDictionary( dataSrc, result ) : result;
+
+                                scope.$applyAsync(function() {
+
+                                    scope.$parent.editor.data[ model ] = handleValue( val );
+                                });
+                            });
                     }
 
 
@@ -2743,7 +2806,7 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                         ret = value;
 
                         if (!multi) {
-                            
+
                             ret = value[0];
                         }
 
@@ -2784,25 +2847,9 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                     });
 
 
-
-                    scope.$on('dialog:ok', function( $event, options, result ) {
-
-                        var val;
-
-                        if (options.filter && model === options.filter.name) {
-
-                            val = result instanceof WeakSet ? weakSetDictionary( dataSrc, result ) : result;
-
-                            scope.$applyAsync(function() {
-
-                                scope.$parent.editor.data[ model ] = handleValue( val );
-                            });
-                        }
-                    });
-
                     if (!readonly && dataSrc) {
 
-                        element.on('click', handleOpen) ;
+                        element.on('click', handleOpen ) ;
                     }
                 }
             }
@@ -4164,17 +4211,60 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
                     $rootScope.$broadcast('dialog:open', id, title, options);
                 };
 
+
+                this.openPromise = function( id, title, options ) {
+
+
+                    this.title = title;
+                    this.options = options;
+
+                    return $q(
+
+                        function( resolve, reject ) {
+
+                            var refId = Math.random();
+
+                            options.$refId = refId;
+
+                            $rootScope.$broadcast('dialog:open', id, title, options );
+
+                            $rootScope.$on('dialog:ok', function( $event, options, result ) {
+
+                                if ( options.$refId === refId) {
+
+                                    resolve( result );
+                                }
+                            });
+
+                            $rootScope.$on('dialog:cancel', function( $event, options ) {
+
+                                if ( options.$refId === refId ) {
+
+                                    reject();
+                                }
+                            });
+                        }
+                    );
+                };
+
                 this.ok = function( callback ) {
 
                     var result = callback();
                     $rootScope.$broadcast('dialog:ok', this.options, result );
 
-                    this.close();
+                    close( );
                 };
 
-                this.close = function() {
+                this.cancel = function ( ) {
 
-                    $rootScope.$broadcast('dialog:close');
+                    $rootScope.$broadcast('dialog:cancel', this.options );
+
+                    close( );
+                };
+
+                var close = function( ) {
+
+                    $rootScope.$broadcast('dialog:close', this.options );
                 };
             };
 
@@ -5540,7 +5630,7 @@ angular.module('npb').run(['$templateCache', function($templateCache) {
     "<div class=\"filter\">\n" +
     "    <div class=\"label\">{{ filter.label }}</div>\n" +
     "    <div tabindex=\"0\" ng-if=\"!filter.kbDriven\" class=\"input\">{{ fbc.displayValue }}</div>\n" +
-    "    <input ng-if=\"filter.kbDriven\" class=\"input\" ng-model=\"$parent.filterValue\" />\n" +
+    "    <input tabindex=\"0\" ng-if=\"filter.kbDriven\" class=\"input\" ng-model=\"$parent.filterValue\" />\n" +
     "</div>"
   );
 
@@ -5548,7 +5638,7 @@ angular.module('npb').run(['$templateCache', function($templateCache) {
   $templateCache.put('partials/ui/filter/like.html',
     "<div class=\"filter\">\n" +
     "    <div class=\"label\">{{ filter.label }}</div>\n" +
-    "    <input class=\"input\" ng-model=\"filterValue\" />\n" +
+    "    <input tabindex=\"0\" class=\"input\" ng-model=\"filterValue\" />\n" +
     "</div>"
   );
 
