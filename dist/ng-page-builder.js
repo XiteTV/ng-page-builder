@@ -5289,6 +5289,7 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
             rpcAction = {
                 callProcedure : {
                     method: 'POST',
+                    cache : false,
                     params : {
                         pid : 'rpc'
                     }
