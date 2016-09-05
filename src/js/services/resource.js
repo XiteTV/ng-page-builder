@@ -100,6 +100,7 @@
             rpcAction = {
                 callProcedure : {
                     method: 'POST',
+                    cache : false,
                     params : {
                         pid : 'rpc'
                     }
