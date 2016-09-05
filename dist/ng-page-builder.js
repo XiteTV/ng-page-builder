@@ -3237,12 +3237,6 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
         return sectionName+d(contentName)+d(contentPartName);
     }
 
-    /**
-     *
-     * @param config
-     * @param objParent
-     * @constructor
-     */
     function ContentPageDefinition( config, objParent ) {
 
         var parent = null;
@@ -3263,6 +3257,7 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
         this.initialFilterValues = {};
         this.contextMenu = null;
         this.pageMenu = null;
+        this.credentials = null;
 
         this.getMembers = function() {
 
@@ -3355,6 +3350,11 @@ module.exports = writeCache = function($q, providerParams, action, CachedResourc
         this.getPageMenu = function ( ) {
 
             return this.pageMenu || ( parent instanceof  ContentPageDefinition ? parent.getPageMenu() : null);
+        };
+
+        this.getCredentials = function( ) {
+
+            return this.credentials || ( parent instanceof ContentPageDefinition ? parent.getCredentials() : null );
         };
 
         function __constructor( config, objParent ) {
